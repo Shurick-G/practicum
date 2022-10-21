@@ -1,8 +1,41 @@
 import pandas as pd
+
+
+# Операторы Pandas пишут не словами, а знаками: 
+# and превращается в & (амперсанд), 
+# or превращается в | (вертикальная черта), 
+# а not превращается в ~ (тильда).
+# Каждое отдельное сравнение необходимо окружать скобками. 
+# Например, логическое выражение в Python x > 0 and x < 10 в Pandas превратится в (x > 0) & (x < 10).
+
+
+
+# Напоследок о разнице между loc и его сокращенной записью. Вот эти две записи на примере поиска всех работающих над новой функцией:
+# полная запись
+print(data.loc[data['Новая функция'] == '+'])
+
+# сокращённая запись
+print(data[data['Новая функция'] == '+']) 
+# Сокращённая запись вам уже встречалась, но в этом уроке мы специально про неё не говорили, чтобы вас не запутать. Её применение ограничено:
+# Если мы передаем только условие (как в примере выше), то можно использовать любую из двух записей, они идентичны. Логические операторы тоже можно использовать.
+# Если мы хотим указать и условие, и столбец, подойдет только полная запись с loc.
+# Если мы хотим изменить значения в таблице, подойдет только полная запись с loc.
+
+
+
 # использовать в качестве индекса "наблюдение" (первый столбец).
 df = pd.read_csv('<путь к файлу>', index_col=1)  
 #Тогда к строкам можно образщаьтся по имени"наблюдения":
 df.loc['<Имя наблюдения>']  f.loc['<индекс строки>, <имя столбца>']
+
+LP_registrations.loc[LP_registrations['phone'] != 0, 'Дубль'] = 'Да'
+
+# Можно сначало логически проиндексировать строки и сохранить в переменную (список гоических операторов),
+# а потом передать список в .loc[]
+rows = (data['Новая функция'] == '+') & (data['Роль'] == 'разработчик')
+data.loc[rows, "Роль"] = "улучшатель"
+
+
 df.iloc[<номер строки>, <номер столбца>  ]
 # название столбцов df в список
 list(df.columns) 
@@ -119,6 +152,8 @@ df.describe()
 df.groupby(['<столбец 1>', '<Столбец 2>']).sum()
 df.groupby(['<столбец 1>', '<Столбец 2>']).agg(['sum', 'max'])
 
+logs.groupby('source').agg({'purchase':['count', 'sum']})
+
 # Никогда не используйте циклы в работе с большт количесвом данных
 # Метод
 .apply(func) 
@@ -193,11 +228,11 @@ retail = retail.astype({'CustomerID' : 'Int'})
 retail = retail.query('UnitPrice > 0 ')
 
 retail.groupby('country', as_index=False).agg({'CustomerID':'count'}) \
-    .sort_values('CustomerID', asceding=False).shape
+    .sort_values('CustomerID', ascending=False).shape
 
 
 retail[retail.CustomerID > 0 ].groupby('country',as_index=False) \
-    .agg({'CustomerID' : pd.Series.nunique}).sort_values('CustomerID', asceding=False)
+    .agg({'CustomerID' : pd.Series.nunique}).sort_values('CustomerID', ascending=False)
 
 
 UK_data = retail.query("country == 'United Kingdom' & CustomerID > 0")
@@ -205,13 +240,13 @@ UK_data = retail.query("country == 'United Kingdom' & CustomerID > 0")
 UK_data.groupby('CustomerID', as_index=False) \
     .agg({'InvoiceNo': 'count'}) \
     .rename(columns={'InvoiceNo': 'transactions'}) \
-    .sort_values('transactions', asceding=False).transactions.median()
+    .sort_values('transactions', ascending=False).transactions.median()
 
 
 transactions_data = UK_data.groupby('CustomerID', as_index=False) \
                             .agg({'InvoiceNo' : 'count'}) \
                             .rename(columns={'InvoiceNo': 'transactions'}) \
-                            .sort_values('transactions', asceding=False).transactions
+                            .sort_values('transactions', ascending=False).transactions
 
 sns.distplot(transactions_data.query('transactions < 1000').transactions, kde=False)
 
@@ -257,11 +292,30 @@ cholera = cholera.dropna(subset=['total_cases', 'deaths', 'case_fatality_rate'],
 df.duplicated()
 df.duplicated().sum()
 
+# Напомним, что если вызвать метод duplicated() без подсчёта суммы, 
+# то на экране будут отображены все строки. Там, где есть дубликаты, будет логическое значение True, 
+# где дубликата нет — False. 
+# Метод sum() воспринимает все значения True как единицы, поэтому происходит сложение всех единиц, 
+# то есть находится количество дубликатов.
+
 duplicated_df = df[df.duplicated()].head() #результат — датафрейм с дубликатами
 
 df = df.drop_duplicates() 
 df = df.drop_duplicates().reset_index()          # После удаления строчек лучше обновить индексацию: чтобы в ней не осталось пропусков
 df = df.drop_duplicates().reset_index(drop=True) # Можно и не создавать столбец index. Для этого у метода reset_index() изменим специальный параметр
+df = df.drop_duplicates(subset=['name'], keep='first')
+df = df.drop_duplicates(subset=['name'], keep='last' )
+
+# Способ второй "ручной поиск дубликатов"
+value_counts() # анализирует столбец, выбирает каждое уникальное значение и подсчитывает частоту его встречаемости в списке
+stock['item'].value_counts()
+
+# Чтобы учесть такие дубликаты, 
+# все символы в строках приводят к нижнему регистру вызовом метода lower():
+str.lower()
+# Жля приведения к нижнему регистру объекта Series используеться
+series.str.lower()
+stock['item'].str.lower()
 
 # Поиск неявных дубликатов
 # Неявные дубликаты ищут методом unique(). Он возвращает перечень уникальных значений в столбце:
@@ -275,9 +329,60 @@ name = 'Роджер Федерер' # правильное имя
 tennis['name'] = tennis['name'].replace(duplicates, name) # замена всех значений из duplicates на name
 print(tennis) # датафрейм изменился, неявные дубликаты устранены 
 
+# Изменение типов данных --------------------------
+transactions['amount'] = pd.to_numeric(transactions['amount'], errors='coerce')
+# errors='coerce'– что не сможет распарсить, заменит на NaN
+
+transactions['amount'] =transactions['amount'].astype('int')
+
+# Методом to_datetime() превратим содержимое этого столбца в понятные для Python даты.
+# Для этого строку форматируют, обращаясь к специальной системе обозначений, где:
+# %d — день месяца (от 01 до 31)
+# %m — номер месяца (от 01 до 12)
+# %Y — четырёхзначный номер года (например, 2019)
+# Z — стандартный разделитель даты и времени
+# %H — номер часа в 24-часовом формате
+# %I — номер часа в 12-часовом формате
+# %M — минуты (от 00 до 59)
+# %S — секунды (от 00 до 59)
+# Пример:
+arrivals['target_datetime'] = pd.to_datetime(arrivals['target_time'], format='%Y-%m-%dZ%H:%M:%S')
+
+# Метод to_datetime() работает и с форматом unix time. 
+# Первый аргумент — это столбец со временем в формате unix time, второй аргумент unit со значением 's' сообщит о том, 
+# что нужно перевести время в привычный формат с точностью до секунды.
+# Часто приходится исследовать статистику по месяцам: например, узнать, на сколько минут сотрудник опаздывал в среднем. 
+# Чтобы осуществить такой расчёт, нужно поместить время в класс DatetimeIndex и применить к нему атрибут month:
+arrivals['month'] = pd.DatetimeIndex(arrivals['date_datetime']).month
+
+# Функция для одной строки
+
+
+
+
+
 #-----------------------------------------------------------------------------------------------------
 exoplanet.groupby('discovered').count()
 exo_number = exoplanet.groupby('discovered')['radius'].count()
+
+
+logs['source'].value_counts() # возвращает уникальные значения и количество их упоминаний
+
+logs[logs['email'].isna()]
+print(logs[logs['email'].isna()].head())
+
+
+support_log_grouped['alert_group'] = support_log_grouped['user_id'].apply(alert_group)
+
+
+
+
+
+
+
+
+
+
 
 
 # Рекурсия для извлечения списка из списков
