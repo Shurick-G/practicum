@@ -356,7 +356,7 @@ arrivals['target_datetime'] = pd.to_datetime(arrivals['target_time'], format='%Y
 arrivals['month'] = pd.DatetimeIndex(arrivals['date_datetime']).month
 
 # Функция для одной строки
-
+clients['age_group'] = clients.apply(age_group_unemployed, axis=1) 
 
 
 
@@ -379,9 +379,22 @@ support_log_grouped['alert_group'] = support_log_grouped['user_id'].apply(alert_
 
 
 
+# Задание 11. 
+# Заполните пропуски в столбце `days_employed` медианными значениями по каждого типа занятости `income_type`.
+# Решение из практикума
+for t in data['income_type'].unique():
+    data.loc[(data['income_type'] == t) & (data['total_income'].isna()), 'total_income'] = \
+    data.loc[(data['income_type'] == t), 'total_income'].median()
 
+# Моё решение
+income_type_list = list(data['income_type'].unique())
 
-
+for income_type in income_type_list:
+    type_median = data[data['income_type'] == income_type]['total_income'].median()
+    data[data['income_type'] == income_type] = \
+    data[data['income_type'] == income_type].fillna({'total_income':type_median})
+# По идеи, мое решение должно работать быстрее, но список типов можно собрать прямо в цикле,
+# как это сделано в практикуме. И как видно из примера, использовать list() необязательно
 
 
 
@@ -392,3 +405,7 @@ def list_from_lists(main_list, list_to_append):
             list_from_lists(el, list_to_append)
         else:
             list_to_append.append(el)
+
+
+df['age_group'] = pd.cut(df['age_group'] 5)
+df.groupby('age_group')['transported'].mean().plot()
