@@ -407,5 +407,57 @@ def list_from_lists(main_list, list_to_append):
             list_to_append.append(el)
 
 
+
+
+#---------------------- Примеры из вебинара ------------------------------------------------------
+df.groupby('VIP')['transported'].mean()
+df.groupby('VIP')['transported'].agg(['count', 'mean'])
+df.groupby('VIP')['Age'].agg(['count', 'mean'])
+
 df['age_group'] = pd.cut(df['age_group'] 5)
 df.groupby('age_group')['transported'].mean().plot()
+df.groupby('VIP')['age_group'].agg(['count', 'mean'])
+
+df.groupby('VIP')['age_group'].mean().plot()
+df.groupby('VIP')['age_group'].mean().plot(ylim=0)
+df.groupby('VIP')['age_group'].mean().plot(kind='bar')
+df.groupby('VIP')['age_group'].mean().plot.bar()
+df.groupby('VIP')['age_group'].mean().sort_values(ascending=False).plot(kind='bar')
+
+# Если всё выражение взять в скобки, его части можно преносить по строкам
+# не используя обратный слэш
+(
+    df.groupby('VIP')['age_group'].mean()
+    .sort_values(ascending=False).plot(kind='bar')
+    )
+
+df['Cabin'].str[0]
+df['Cabin'].str.replace(# ...
+df['Cabin'].str.split('/')
+df['Cabin'].str.split('/', maxsplit=1)
+# maxsplit=-1 – отсутствие ограничение на количество изменений
+
+
+
+def get_first_part(x):
+    if not pd.isna(x): # если не пропуск
+        return x.split('/')[0]
+    return x # если пропуск
+
+df['Cabin'].apply(get_first_part)
+
+#--------- Статья "10 трюков библиотеки Python Pandas, которые вам нужны" -----------------------------
+# https://proglib.io/p/pandas-tricks
+
+# map
+# Это классная команда для простого преобразования данных. 
+# Определяете словарь, в котором «ключами» являются старые значения, а «значениями» – новые значения:
+level_map = {1: 'high', 2: 'medium', 3: 'low'}
+df['c_level'] = df['c'].map(level_map)
+
+# Выбрать строки с конкретными идентификаторами
+# В SQL используем SELECT * FROM… WHERE ID в («A001», «C022»,…) 
+# и получаем записи с конкретными идентификаторами. 
+# Если хотите сделать то же с помощью Python библиотеки Pandas, используйте
+df_filter = df['ID'].isin(['A001','C022',...])
+df[df_filter]
