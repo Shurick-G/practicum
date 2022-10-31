@@ -461,3 +461,14 @@ df['c_level'] = df['c'].map(level_map)
 # Если хотите сделать то же с помощью Python библиотеки Pandas, используйте
 df_filter = df['ID'].isin(['A001','C022',...])
 df[df_filter]
+
+# --------------------- Простые визуализации ------------------------------------------------------------
+df['time_spent'].hist(bins=100, range = (0, 1500))
+
+
+import matplotlib.pyplot as plt 
+
+plt.ylim(-50, 500)
+plt.xlim(0, 200) 
+
+df.boxplot()
