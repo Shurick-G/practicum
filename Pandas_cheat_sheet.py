@@ -520,3 +520,10 @@ print(too_fast_stat.sort_values('too_fast', ascending=False).head())
 
 # --------------------- df.query(...) ------------------------------------------------------------
 rint(df.query('Is_Direct == True or Has_luggage == True')) 
+df.query('color == @variable') # знаком @ обозначаеться внешняя переменная
+
+good_ids  = too_fast_stat.query('too_fast  < 0.5')
+good_data = data.query('id in @good_ids.index')
+
+# Переименование столбцов при использовании сводных таблиц и образовании "мультииндекса"
+id_name.columns = ['name', 'count']
