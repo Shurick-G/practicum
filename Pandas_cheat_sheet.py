@@ -131,6 +131,9 @@ new_uids_df['created_date'] = pd.to_datetime(new_uids_df['created_date'])
 
 # вычисление разницы дат в днях (обе даты должны быть в формате datetime)
 delta = (row['next_date'] - row['Дата']).days
+pd.Timedelta(1, "d")
+pd.Timedelta(hours=3)
+data['local_time'].round('1H')
 
 
 # Замена части текста как в Excel через Ctrl + H
@@ -335,6 +338,7 @@ transactions['amount'] = pd.to_numeric(transactions['amount'], errors='coerce')
 
 transactions['amount'] =transactions['amount'].astype('int')
 
+arrivals['target_datetime'] = pd.to_datetime(arrivals['target_time'], format='%Y-%m-%dZ%H:%M:%S')
 # Методом to_datetime() превратим содержимое этого столбца в понятные для Python даты.
 # Для этого строку форматируют, обращаясь к специальной системе обозначений, где:
 # %d — день месяца (от 01 до 31)
@@ -346,7 +350,7 @@ transactions['amount'] =transactions['amount'].astype('int')
 # %M — минуты (от 00 до 59)
 # %S — секунды (от 00 до 59)
 # Пример:
-arrivals['target_datetime'] = pd.to_datetime(arrivals['target_time'], format='%Y-%m-%dZ%H:%M:%S')
+
 
 # Метод to_datetime() работает и с форматом unix time. 
 # Первый аргумент — это столбец со временем в формате unix time, второй аргумент unit со значением 's' сообщит о том, 
@@ -472,3 +476,47 @@ plt.ylim(-50, 500)
 plt.xlim(0, 200) 
 
 df.boxplot()
+
+
+
+import matplotlib.pyplot as plt
+# После команды вывода графика вызывают метод show(). 
+# Он позволяет посмотреть, как отличаются гистограммы с разным числом корзин: 
+data.hist(bins=10)
+plt.show()
+data.hist(bins=100)
+plt.show() 
+
+
+
+df = pd.DataFrame({'a': [2, 3, 4, 5], 'b': [4, 9, 16, 25]})
+print(df)
+df.plot() 
+df.plot(style='o')  # Только точки
+df.plot(style='x')  # Вместо точек – крестики
+df.plot(style='o-') # 'o-' - кружок и линия 
+# По умолчанию, метод plot строит график используя индексы в качестве значений оси Х
+df.plot(x='b', y='a', style='o-') 
+df.plot(x='b', y='a', style='o-', xlim=(0, 30)) 
+df.plot(x='b', y='a', style='o-', xlim=(0, 30), grid=True) 
+df.plot(x='b', y='a', style='o-', xlim=(0, 30), grid=True, figsize=(10, 3)) 
+
+# одна команда в несколько строк: не забыть заключить конструкцию в скобки 
+(
+    data
+    .query('id == "3c1e4c52"')
+    .plot(x='local_time', y='time_spent', 
+          ylim=(0, 1000), style='o', grid=True, figsize=(12, 6))
+)
+
+
+(
+    data.query('id == "3c1e4c52"')
+    .pivot_table(index='date_hour', values='time_spent', aggfunc='median')
+    .plot(grid=True, figsize=(12, 5))
+) 
+
+print(too_fast_stat.sort_values('too_fast', ascending=False).head()) 
+
+# --------------------- df.query(...) ------------------------------------------------------------
+rint(df.query('Is_Direct == True or Has_luggage == True')) 
