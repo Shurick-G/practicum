@@ -280,8 +280,8 @@ print(res)
 
 
 
-# Предобработка данных
-# ----------------------------------------------------------------------------------------------------
+
+# ----------------------------------- Предобработка данных -------------------------------------------
 # Посмотреть колдичество пропускоы в df
 df.isna().sum() 
 
@@ -518,8 +518,28 @@ df.plot(x='b', y='a', style='o-', xlim=(0, 30), grid=True, figsize=(10, 3))
 
 print(too_fast_stat.sort_values('too_fast', ascending=False).head()) 
 
+hw.sort_values('height').plot(x='height', y='weight') 
+hw.plot(x='height', y='weight', kind='scatter') 
+hw.plot(x='height', y='weight', kind='scatter', alpha=0.03) 
+
+station_stat_full.plot.scatter(x='count', y='time_spent',  grid=True)
+# Тоже самое что и:
+station_stat_full.plot(x='count', y='time_spent', kind='scatter',  grid=True)
+
+
+# Когда точек много и каждая в отдельности не интересна, данные отображают особым способом. 
+# График делят на ячейки; пересчитывают точки в каждой ячейке. 
+# Затем ячейки заливают цветом: чем больше точек — тем цвет гуще.
+hw.plot(x='height', y='weight', kind='hexbin', gridsize=20, figsize=(8, 6), sharex=False, grid=True)
+# gridsize – число ячеек по горизонтальной оси, аналог bins для hist().
+# При столкновении с багами приходится ставить «костыли». 
+# Здесь это параметр sharex=False. 
+# Если значение True, то пропадёт подпись оси Х,
+# а без sharex график выйдет неказистым — это «костыльный» обход бага библиотеки pandas.
+
 # --------------------- df.query(...) ------------------------------------------------------------
-rint(df.query('Is_Direct == True or Has_luggage == True')) 
+
+print(df.query('Is_Direct == True or Has_luggage == True')) 
 df.query('color == @variable') # знаком @ обозначаеться внешняя переменная
 
 good_ids  = too_fast_stat.query('too_fast  < 0.5')
@@ -534,3 +554,41 @@ id_name.columns = ['name', 'count']
 # Ещё методом join() можно объединять больше двух таблиц: 
 # их набор передают списком вместо второго датафрейма.
 df1.join(df2, on='a', rsuffix='_y')['c'] 
+
+# --------------------- Коэффициент корреляции Пирсона ------------------------------------------------------------
+
+print(hw['height'].corr(hw['weight']))
+print(hw['weight'].corr(hw['height'])) # поменяли местами рост и вес 
+# 0.5196907833692264
+# 0.5196907833692264 
+
+hwa.corr()
+#         height    weight       age      male
+# height  1.000000  0.940822  0.683689  0.139229
+# weight  0.940822  1.000000  0.678335  0.155443
+# age     0.683689  0.678335  1.000000  0.005887
+# male    0.139229  0.155443  0.005887  1.000000 
+
+# --------------------- Матрица диаграмм рассеяния ------------------------------------------------------------
+
+pd.plotting.scatter_matrix(df)
+pd.plotting.scatter_matrix(df, figsize=(9, 9))
+
+# --------------------- df.where() ------------------------------------------------------------
+shopping.where(shopping != 'хамон', 'обойдусь')
+
+big_nets_stat = final_stat.query('stations > 10')
+station_stat_full['group_name'] = (
+    station_stat_full['name']
+    .where(station_stat_full['name'].isin(big_nets_stat.index), 'Другие')
+)
+
+
+# Метод .groupby возвращает "пары" объектов список уникальных ключей и Series значений к каждлому ключу
+
+for developer_name, developer_data in IT_names.groupby('name'):
+    print(
+        'Имя {} встречается {} раза'.format(
+            developer_name, len(developer_data)
+        )
+    ) 
