@@ -291,6 +291,9 @@ df['track_name '] = df['track_name'].fillna('unknown')
 # Удаление столбцов, в которых в столбцах total_cases, deaths или case_fatality_rate встречается NaN
 cholera = cholera.dropna(subset=['total_cases', 'deaths', 'case_fatality_rate'], axis='columns') 
 
+dfg[~dfg['short_url_cat'].notnull()]
+
+
 # Поиск явных дубликатов
 df.duplicated()
 df.duplicated().sum()
