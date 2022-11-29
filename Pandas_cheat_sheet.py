@@ -1,5 +1,13 @@
-import pandas as pd
+pip install numpy
+pip install pandas
+pip install matplotlib
+pip install seaborn
+pip install scipy
 
+import pandas as pd
+import matplotlib.pyplot as plot
+import seaborn as sns
+from scipy import stats as st
 
 # Операторы Pandas пишут не словами, а знаками: 
 # and превращается в & (амперсанд), 
@@ -431,6 +439,11 @@ df.groupby('VIP')['age_group'].mean().plot(kind='bar')
 df.groupby('VIP')['age_group'].mean().plot.bar()
 df.groupby('VIP')['age_group'].mean().sort_values(ascending=False).plot(kind='bar')
 
+calls.groupby(['user_id', 'month']).agg(calls=('duration', 'count'))
+calls.groupby(['user_id', 'month']).agg(minutes=('duration', 'sum'))
+# ------------------------------------<Название> <Столбец>, <Что сделать>
+# ------------------------------------<нового столбца>
+
 # Если всё выражение взять в скобки, его части можно преносить по строкам
 # не используя обратный слэш
 (
@@ -479,7 +492,8 @@ plt.ylim(-50, 500)
 plt.xlim(0, 200) 
 
 df.boxplot()
-
+df.boxplot('total_area', 'is_it_piter')
+df.boxplot('<Что изучаем>', '<В каком разрезе>')
 
 
 import matplotlib.pyplot as plt
@@ -526,6 +540,7 @@ hw.plot(x='height', y='weight', kind='scatter')
 hw.plot(x='height', y='weight', kind='scatter', alpha=0.03) 
 
 station_stat_full.plot.scatter(x='count', y='time_spent',  grid=True)
+station_stat_full.plot.scatter(x='count', y='time_spent',  grid=True, alpha=0.1)
 # Тоже самое что и:
 station_stat_full.plot(x='count', y='time_spent', kind='scatter',  grid=True)
 
@@ -560,8 +575,8 @@ df1.join(df2, on='a', rsuffix='_y')['c']
 
 # --------------------- Коэффициент корреляции Пирсона ------------------------------------------------------------
 
-print(hw['height'].corr(hw['weight']))
-print(hw['weight'].corr(hw['height'])) # поменяли местами рост и вес 
+df['height'].corr(df['weight'])
+df['weight'].corr(df['height']) # поменяли местами рост и вес 
 # 0.5196907833692264
 # 0.5196907833692264 
 
@@ -595,3 +610,8 @@ for developer_name, developer_data in IT_names.groupby('name'):
             developer_name, len(developer_data)
         )
     ) 
+
+
+
+
+spot_probs={k:spot_counts[k]/36 for k in spot_counts} # dictionary comprehension 
