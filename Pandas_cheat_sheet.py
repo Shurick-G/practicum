@@ -9,6 +9,9 @@ import matplotlib.pyplot as plot
 import seaborn as sns
 from scipy import stats as st
 
+
+# Ябучий символ из 1С  
+
 # Операторы Pandas пишут не словами, а знаками: 
 # and превращается в & (амперсанд), 
 # or превращается в | (вертикальная черта), 
@@ -615,3 +618,11 @@ for developer_name, developer_data in IT_names.groupby('name'):
 
 
 spot_probs={k:spot_counts[k]/36 for k in spot_counts} # dictionary comprehension 
+
+# Привести названия к нажнему регистру можно командой 
+df.columns.str.lower(). 
+
+# Для удобства можно еще сразу все данные вывести в процентах по пропущенным значениям. 
+data.isna().sum()/len(data)*100` или `data.isna().mean()
+# Возможно это будет более оптимально и позволит сразу увидеть где максимальное/минимальное 
+# количество пропусков, и в каких колонках похожий процент пропусков.
