@@ -626,3 +626,49 @@ df.columns.str.lower().
 data.isna().sum()/len(data)*100` или `data.isna().mean()
 # Возможно это будет более оптимально и позволит сразу увидеть где максимальное/минимальное 
 # количество пропусков, и в каких колонках похожий процент пропусков.
+
+# Техническую строку `<AxesSubplot:...>` можно убрать с помощью метода 
+plt.show() 
+# или добавления в конце кода `;`
+
+
+
+# --------------------- DecisionTreeClassifier() ------------------------------------------------------------
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier()
+
+model.fit(features, target) 
+
+# Параметры умодели:
+DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+max_features=None, max_leaf_nodes=None,
+min_impurity_decrease=0.0, min_impurity_split=None,
+min_samples_leaf=1, min_samples_split=2, splitter='best')
+
+answers = model.predict(new_features) 
+
+# указываем случайное состояние (число)
+model = DecisionTreeClassifier(random_state=12345)
+
+# обучаем модель как раньше
+model.fit(features, target)
+
+
+
+
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+
+df = pd.read_csv('train_data.csv')
+
+df.loc[df['last_price'] > 5650000, 'price_class'] = 1
+df.loc[df['last_price'] <= 5650000, 'price_class'] = 0
+
+features = df.drop(['last_price', 'price_class'], axis=1)
+target = df['price_class']
+
+model = DecisionTreeClassifier(random_state=12345)
+
+model.fit(features, target) 
