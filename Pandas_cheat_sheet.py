@@ -663,7 +663,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 df = pd.read_csv('train_data.csv')
 
-df.loc[df['last_price'] > 5650000, 'price_class'] = 1
+df.loc[df['last_price'] >  5650000, 'price_class'] = 1
 df.loc[df['last_price'] <= 5650000, 'price_class'] = 0
 
 features = df.drop(['last_price', 'price_class'], axis=1)
@@ -672,3 +672,53 @@ target = df['price_class']
 model = DecisionTreeClassifier(random_state=12345)
 
 model.fit(features, target) 
+
+
+# В библиотеке sklearn метрики находятся в модуле sklearn.metrics. 
+# Вычисляется accuracy функцией accuracy_score() (англ. «оценка правильности»).
+from sklearn.metrics import accuracy_score 
+
+# Функция принимает на вход два аргумента: 
+# 1) правильные ответы, 2) предсказания модели. Возвращает она значение accuracy.
+accuracy = accuracy_score(target, predictions) 
+
+
+
+
+# ----- Пример -------
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+# < импортируйте функцию расчёта accuracy из библиотеки sklearn >
+from sklearn.metrics import accuracy_score 
+df = pd.read_csv('/datasets/train_data.csv')
+df.loc[df['last_price'] > 5650000, 'price_class'] = 1
+df.loc[df['last_price'] <= 5650000, 'price_class'] = 0
+
+features = df.drop(['last_price', 'price_class'], axis=1)
+target = df['price_class']
+
+model = DecisionTreeClassifier(random_state=12345)
+
+model.fit(features, target)
+
+test_df = pd.read_csv('/datasets/test_data.csv')
+
+test_df.loc[test_df['last_price'] > 5650000, 'price_class'] = 1
+test_df.loc[test_df['last_price'] <= 5650000, 'price_class'] = 0
+
+test_features = test_df.drop(['last_price', 'price_class'], axis=1)
+test_target = test_df['price_class']
+
+train_predictions = model.predict(features)
+test_predictions = model.predict(test_features)
+
+print("Accuracy")
+print("Обучающая выборка:", accuracy_score(target,      train_predictions))
+print("Тестовая выборка:",  accuracy_score(test_target, test_predictions))
+
+
+# ----- Деление на две выборки -------
+from sklearn.model_selection import train_test_split 
+df_train, df_valid = train_test_split(df, test_size=0.25, random_state=12345) 
+# Напомним: в random_state мы могли записать всё что угодно, главное не None.
+
