@@ -722,3 +722,31 @@ from sklearn.model_selection import train_test_split
 df_train, df_valid = train_test_split(df, test_size=0.25, random_state=12345) 
 # Напомним: в random_state мы могли записать всё что угодно, главное не None.
 
+
+
+# --------------------- RandomForestClassifier() ------------------------------------------------------------
+from sklearn.ensemble import RandomForestClassifier
+
+# Чтобы управлять количеством деревьев в лесу, пропишем гиперпараметр n_estimators 
+# (от англ. number of estimators, «количество оценщиков»
+
+model = RandomForestClassifier(random_state=12345, n_estimators=3)
+model.fit(features, target)
+model.predict(new_item)
+
+# Правильность модели мы проверяли функцией accuracy_score(). 
+# Но можно — и методом score(). Он считает accuracy для всех алгоритмов классификации.
+model.score(features, target)
+
+# --------------------- LogisticRegression() ------------------------------------------------------------
+from sklearn.linear_model import LogisticRegression
+# Запишите модель в переменной, указав гиперпараметры. Для постоянства результата задайте random_state, равный 12345. 
+# Добавьте дополнительные гиперпараметры: solver='lbfgs' и max_iter=1000. 
+# Первый гиперпараметр позволяет выбрать алгоритм, который будет строить модель. 
+# Алгоритм 'lbfgs' — один из самых распространённых. 
+# Он подходит для большинства задач. Гиперпараметром max_iter задаётся максимальное количество итераций обучения. 
+# Значение этого параметра по умолчанию равно 100, но в некоторых случаях понадобится больше итераций.
+model = LogisticRegression(random_state=12345, solver='lbfgs', max_iter=1000)
+model.fit(features, target)
+model.predict(new_item)
+model.score(features, target)
